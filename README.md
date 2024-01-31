@@ -1,11 +1,21 @@
 ### install
 
+##### Linux
+
 ```shell
 sudo apt install cmake
 sudo apt install make
 sudo apt install g++
 sudo apt install gcc
 ```
+
+##### Windows
+
+- CMake
+
+- MinGW
+
+*Note: The name of MinGW "make" needs to be changed.*
 
 ### build
 
@@ -18,7 +28,7 @@ cmake ..
 make
 ```
 
-##### Windows(MingW)
+##### Windows(MinGW)
 
 ```powershell
 mkdir build
