@@ -1,5 +1,3 @@
-
-
 ### install
 
 ```shell
@@ -9,13 +7,23 @@ sudo apt install g++
 sudo apt install gcc
 ```
 
-
 ### build
+
+##### Linux
 
 ```shell
 mkdir build
 cd build
 cmake ..
+make
+```
+
+##### Windows(MingW)
+
+```powershell
+mkdir build
+cd build
+cmake .. -G "MinGW Makefiles"
 make
 ```
 
@@ -38,9 +46,9 @@ std::string readFile(std::string path) {
         return "";
     }
     char buff = 0;
-	while ((buff = fin.get())!=EOF){
-		ss << buff;
-	}
+    while ((buff = fin.get())!=EOF){
+        ss << buff;
+    }
     auto str = ss.str();
 
     return str;
