@@ -74,11 +74,7 @@ int main(int argc, char *argv[])
     // matrix::markdown::parser::Parser parser;
     // std::cout << parser.version << std::endl;
 
-      const std::string headlineTest = R"(
-# Some **test** markdown
-)";
-std::stringstream markdown(testMarkdown);
-const std::string expectedHTML = "<h1>Some **test** markdown</h1>";
+    std::stringstream markdown(testMarkdown);
 
     auto config = std::make_shared<matrix::markdown::parser::ParserConfig>();
     // config->isHeadlineInlineParsingEnabled = false;
@@ -88,13 +84,5 @@ const std::string expectedHTML = "<h1>Some **test** markdown</h1>";
     std::cout << output << std::endl;
 
 
-    
-
-
-
-
-
-
-   
    return 0;
 }

@@ -26,14 +26,7 @@
 #include "unorderedlistparser.h"
 
 // LineParser
-#include "breaklineparser.h"
-#include "emphasizedparser.h"
-#include "imageparser.h"
-#include "inlinecodeparser.h"
-#include "italicparser.h"
-#include "linkparser.h"
-#include "strikethroughparser.h"
-#include "strongparser.h"
+#include "lineparsers.h"
 
 // -----------------------------------------------------------------------------
 
