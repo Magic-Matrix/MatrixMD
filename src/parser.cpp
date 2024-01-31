@@ -15,11 +15,11 @@ Parser::Parser(std::shared_ptr<ParserConfig> config) : config(config) {
     // will be removed in 1.4.0 latest including the booleans
     if (this->config && !this->config->isEmphasizedParserEnabled)
     {
-        this->config->enabledParsers &= ~matrix::markdown::parser::types::EMPHASIZED_PARSER;
+        this->config->enabledParsers &= ~types::PARSER_TYPE::EMPHASIZED_PARSER;
     }
     if (this->config && !this->config->isHTMLWrappedInParagraph)
     {
-        this->config->enabledParsers |= matrix::markdown::parser::types::HTML_PARSER;
+        this->config->enabledParsers |= types::PARSER_TYPE::HTML_PARSER;
     }
 
     if (!this->config){
@@ -158,20 +158,20 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::CODE_BLOCK_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::CODE_BLOCK_PARSER) != 0
         ) &&
-        matrix::markdown::parser::CodeBlockParser::IsStartingLine(line)
+        CodeBlockParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::CodeBlockParser>(
+        parser = std::make_shared<CodeBlockParser>(
         nullptr,
         nullptr
         );
     }
     else if (
         this->config &&
-        (this->config->enabledParsers & matrix::markdown::parser::types::LATEX_BLOCK_PARSER) != 0 &&
-        matrix::markdown::parser::LatexBlockParser::IsStartingLine(line)
+        (this->config->enabledParsers & types::LATEX_BLOCK_PARSER) != 0 &&
+        LatexBlockParser::IsStartingLine(line)
     )
     {
         parser = std::make_shared<LatexBlockParser>(
@@ -182,14 +182,14 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::HEADLINE_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::HEADLINE_PARSER) != 0
         ) &&
-        matrix::markdown::parser::HeadlineParser::IsStartingLine(line)
+        HeadlineParser::IsStartingLine(line)
     )
     {
         if (!this->config || this->config->isHeadlineInlineParsingEnabled)
         {
-        parser = std::make_shared<matrix::markdown::parser::HeadlineParser>(
+        parser = std::make_shared<HeadlineParser>(
             [this](std::string& line){ this->runLineParser(line); },
             nullptr,
             true
@@ -197,7 +197,7 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
         }
         else
         {
-        parser = std::make_shared<matrix::markdown::parser::HeadlineParser>(
+        parser = std::make_shared<HeadlineParser>(
             nullptr,
             nullptr,
             false
@@ -207,12 +207,12 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::HORIZONTAL_LINE_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::HORIZONTAL_LINE_PARSER) != 0
         ) &&
-        matrix::markdown::parser::HorizontalLineParser::IsStartingLine(line)
+        HorizontalLineParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::HorizontalLineParser>(
+        parser = std::make_shared<HorizontalLineParser>(
         nullptr,
         nullptr
         );
@@ -220,12 +220,12 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::QUOTE_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::QUOTE_PARSER) != 0
         ) &&
-        matrix::markdown::parser::QuoteParser::IsStartingLine(line)
+        QuoteParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::QuoteParser>(
+        parser = std::make_shared<QuoteParser>(
         [this](std::string& line){ this->runLineParser(line); },
         [this](const std::string& line){ return this->getBlockParserForLine(line); }
         );
@@ -233,12 +233,12 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::TABLE_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::TABLE_PARSER) != 0
         ) &&
-        matrix::markdown::parser::TableParser::IsStartingLine(line)
+        TableParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::TableParser>(
+        parser = std::make_shared<TableParser>(
         [this](std::string& line){ this->runLineParser(line); },
         nullptr
         );
@@ -246,9 +246,9 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::CHECKLIST_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::CHECKLIST_PARSER) != 0
         ) &&
-        matrix::markdown::parser::ChecklistParser::IsStartingLine(line)
+        ChecklistParser::IsStartingLine(line)
     )
     {
         parser = this->createChecklistParser();
@@ -256,9 +256,9 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::ORDERED_LIST_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::ORDERED_LIST_PARSER) != 0
         ) &&
-        matrix::markdown::parser::OrderedListParser::IsStartingLine(line)
+        OrderedListParser::IsStartingLine(line)
     )
     {
         parser = this->createOrderedListParser();
@@ -266,29 +266,29 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
     else if (
         (
         !this->config ||
-        (this->config->enabledParsers & matrix::markdown::parser::types::UNORDERED_LIST_PARSER) != 0
+        (this->config->enabledParsers & types::PARSER_TYPE::UNORDERED_LIST_PARSER) != 0
         ) &&
-        matrix::markdown::parser::UnorderedListParser::IsStartingLine(line)
+        UnorderedListParser::IsStartingLine(line)
     )
     {
         parser = this->createUnorderedListParser();
     }
     else if (
         this->config &&
-        (this->config->enabledParsers & matrix::markdown::parser::types::HTML_PARSER) != 0 &&
-        matrix::markdown::parser::HtmlParser::IsStartingLine(line)
+        (this->config->enabledParsers & types::PARSER_TYPE::HTML_PARSER) != 0 &&
+        HtmlParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::HtmlParser>(nullptr, nullptr);
+        parser = std::make_shared<HtmlParser>(nullptr, nullptr);
     }
     else if (
-        matrix::markdown::parser::ParagraphParser::IsStartingLine(line)
+        ParagraphParser::IsStartingLine(line)
     )
     {
-        parser = std::make_shared<matrix::markdown::parser::ParagraphParser>(
+        parser = std::make_shared<ParagraphParser>(
         [this](std::string& line){ this->runLineParser(line); },
         nullptr,
-        (!this->config || (this->config->enabledParsers & matrix::markdown::parser::types::PARAGRAPH_PARSER) != 0)
+        (!this->config || (this->config->enabledParsers & types::PARSER_TYPE::PARAGRAPH_PARSER) != 0)
         );
     }
 
@@ -296,7 +296,7 @@ std::shared_ptr<BlockParser> Parser::getBlockParserForLine(const std::string& li
 }
 
 std::shared_ptr<BlockParser> Parser::createChecklistParser() const {
-    return std::make_shared<matrix::markdown::parser::ChecklistParser>(
+    return std::make_shared<ChecklistParser>(
         [this](std::string& line){ this->runLineParser(line); },
         [this](const std::string& line)
         {
@@ -305,9 +305,9 @@ std::shared_ptr<BlockParser> Parser::createChecklistParser() const {
         if (
             (
             !this->config ||
-            (this->config->enabledParsers & matrix::markdown::parser::types::CHECKLIST_PARSER) != 0
+            (this->config->enabledParsers & types::PARSER_TYPE::CHECKLIST_PARSER) != 0
             ) &&
-            matrix::markdown::parser::ChecklistParser::IsStartingLine(line)
+            ChecklistParser::IsStartingLine(line)
         )
         {
             parser = this->createChecklistParser();
@@ -320,7 +320,7 @@ std::shared_ptr<BlockParser> Parser::createChecklistParser() const {
 
 
 std::shared_ptr<BlockParser> Parser::createOrderedListParser() const {
-    return std::make_shared<matrix::markdown::parser::OrderedListParser>(
+    return std::make_shared<OrderedListParser>(
         [this](std::string& line){ this->runLineParser(line); },
         [this](const std::string& line)
         {
@@ -329,9 +329,9 @@ std::shared_ptr<BlockParser> Parser::createOrderedListParser() const {
         if (
             (
             !this->config ||
-            (this->config->enabledParsers & matrix::markdown::parser::types::ORDERED_LIST_PARSER) != 0
+            (this->config->enabledParsers & types::PARSER_TYPE::ORDERED_LIST_PARSER) != 0
             ) &&
-            matrix::markdown::parser::OrderedListParser::IsStartingLine(line)
+            OrderedListParser::IsStartingLine(line)
         )
         {
             parser = this->createOrderedListParser();
@@ -339,9 +339,9 @@ std::shared_ptr<BlockParser> Parser::createOrderedListParser() const {
         else if (
             (
             !this->config ||
-            (this->config->enabledParsers & matrix::markdown::parser::types::UNORDERED_LIST_PARSER) != 0
+            (this->config->enabledParsers & types::PARSER_TYPE::UNORDERED_LIST_PARSER) != 0
             ) &&
-            matrix::markdown::parser::UnorderedListParser::IsStartingLine(line)
+            UnorderedListParser::IsStartingLine(line)
         )
         {
             parser = this->createUnorderedListParser();
@@ -353,7 +353,7 @@ std::shared_ptr<BlockParser> Parser::createOrderedListParser() const {
 }
 
 std::shared_ptr<BlockParser> Parser::createUnorderedListParser() const {
-    return std::make_shared<matrix::markdown::parser::UnorderedListParser>(
+    return std::make_shared<UnorderedListParser>(
         [this](std::string& line){ this->runLineParser(line); },
         [this](const std::string& line)
         {
@@ -362,9 +362,9 @@ std::shared_ptr<BlockParser> Parser::createUnorderedListParser() const {
         if (
             (
             !this->config ||
-            (this->config->enabledParsers & matrix::markdown::parser::types::ORDERED_LIST_PARSER) != 0
+            (this->config->enabledParsers & types::PARSER_TYPE::ORDERED_LIST_PARSER) != 0
             ) &&
-            matrix::markdown::parser::OrderedListParser::IsStartingLine(line)
+            OrderedListParser::IsStartingLine(line)
         )
         {
             parser = this->createOrderedListParser();
@@ -372,9 +372,9 @@ std::shared_ptr<BlockParser> Parser::createUnorderedListParser() const {
         else if (
             (
             !this->config ||
-            (this->config->enabledParsers & matrix::markdown::parser::types::UNORDERED_LIST_PARSER) != 0
+            (this->config->enabledParsers & types::PARSER_TYPE::UNORDERED_LIST_PARSER) != 0
             ) &&
-            matrix::markdown::parser::UnorderedListParser::IsStartingLine(line)
+            UnorderedListParser::IsStartingLine(line)
         )
         {
             parser = this->createUnorderedListParser();
